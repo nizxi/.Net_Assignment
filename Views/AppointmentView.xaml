@@ -1,0 +1,151 @@
+<UserControl x:Class="AppointmentSystem.Views.AppointmentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="1000">
+
+    <Grid Background="White" Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <TextBlock Grid.Row="0" Text="Manage Appointments" FontSize="24" FontWeight="Bold" Foreground="#333" Margin="0,0,0,20"/>
+
+        <!-- Search and Filter -->
+        <Grid Grid.Row="1" Margin="0,0,0,15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0"
+                     Style="{StaticResource TextBoxStyle}"
+                     Placeholder="Search by patient name, doctor, email, or department..."
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                     Padding="12,8"
+                     Height="38"/>
+
+            <Button Grid.Column="1"
+                    Command="{Binding RefreshCommand}"
+                    Style="{StaticResource ButtonStyle}"
+                    Margin="10,0,0,0"
+                    Padding="20,8"
+                    Content="🔄 Refresh"/>
+        </Grid>
+
+        <!-- Appointments DataGrid -->
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Appointments}"
+                  SelectedItem="{Binding SelectedAppointment}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  Background="White"
+                  AlternatingRowBackground="#F9F9F9"
+                  HeadersVisibility="Column"
+                  Margin="0,0,0,15">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Patient Name" Binding="{Binding PatientName}" Width="140"/>
+                <DataGridTextColumn Header="Email" Binding="{Binding PatientEmail}" Width="180"/>
+                <DataGridTextColumn Header="Phone" Binding="{Binding PatientPhone}" Width="110"/>
+                <DataGridTextColumn Header="Doctor" Binding="{Binding DoctorName}" Width="120"/>
+                <DataGridTextColumn Header="Department" Binding="{Binding Department}" Width="120"/>
+                <DataGridTextColumn Header="Date" Binding="{Binding AppointmentDate, StringFormat=yyyy-MM-dd}" Width="100"/>
+                <DataGridTextColumn Header="Time" Binding="{Binding AppointmentTime, StringFormat=hh\\:mm}" Width="70"/>
+                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="150"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+            </DataGrid.Columns>
+
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Height" Value="35"/>
+                </Style>
+            </DataGrid.RowStyle>
+        </DataGrid>
+
+        <!-- Details and Actions -->
+        <Border Grid.Row="3" BorderBrush="#E0E0E0" BorderThickness="1" Padding="15" CornerRadius="5" Background="#FAFAFA">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Details -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Selected Appointment Details:" FontWeight="Bold" Margin="0,0,0,10"/>
+                    
+                    <Grid Visibility="{Binding SelectedAppointment, Converter={StaticResource {x:Static System:Object}}, ConverterParameter=null}">
+                        <StackPanel>
+                            <TextBlock>
+                                <Run Text="Patient: " FontWeight="Bold"/>
+                                <Run Text="{Binding SelectedAppointment.PatientName}"/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="Appointment: " FontWeight="Bold"/>
+                                <Run Text="{Binding SelectedAppointment.AppointmentDate, StringFormat=yyyy-MM-dd}"/>
+                                <Run Text="at "/>
+                                <Run Text="{Binding SelectedAppointment.AppointmentTime, StringFormat=hh\\:mm}"/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="Doctor: " FontWeight="Bold"/>
+                                <Run Text="Dr. "/>
+                                <Run Text="{Binding SelectedAppointment.DoctorName}"/>
+                                <Run Text=" - "/>
+                                <Run Text="{Binding SelectedAppointment.Department}"/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="Status: " FontWeight="Bold"/>
+                                <Run Text="{Binding SelectedAppointment.Status}"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock Text="No appointment selected" 
+                               Foreground="#999"
+                               Visibility="{Binding SelectedAppointment, Converter={StaticResource NullToVisibilityConverter}}"/>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                    <Button Content="✓ Confirm" 
+                            Command="{Binding UpdateStatusCommand}"
+                            CommandParameter="Confirmed"
+                            Style="{StaticResource ButtonStyle}"
+                            Background="{StaticResource SuccessBrush}"
+                            Margin="0,0,10,0"/>
+
+                    <Button Content="→ In Progress" 
+                            Command="{Binding UpdateStatusCommand}"
+                            CommandParameter="InProgress"
+                            Style="{StaticResource ButtonStyle}"
+                            Background="#0D8AA8"
+                            Margin="0,0,10,0"/>
+
+                    <Button Content="✓ Complete" 
+                            Command="{Binding UpdateStatusCommand}"
+                            CommandParameter="Completed"
+                            Style="{StaticResource ButtonStyle}"
+                            Background="#6C757D"
+                            Margin="0,0,10,0"/>
+
+                    <Button Content="✕ Cancel" 
+                            Command="{Binding DeleteCommand}"
+                            CommandParameter="{Binding SelectedAppointment}"
+                            Style="{StaticResource ButtonStyle}"
+                            Background="{StaticResource DangerBrush}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Status Message -->
+        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="#28A745" FontSize="11" Margin="0,5,0,0"/>
+    </Grid>
+</UserControl>

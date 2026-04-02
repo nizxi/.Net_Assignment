@@ -1,0 +1,157 @@
+<UserControl x:Class="AppointmentSystem.Views.BookAppointmentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="1000">
+
+    <Grid Background="White" Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <TextBlock Grid.Row="0" Text="Book New Appointment" FontSize="24" FontWeight="Bold" Foreground="#333" Margin="0,0,0,20"/>
+
+        <!-- Form -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,0,20">
+            <StackPanel Margin="0,0,20,0">
+                <!-- Patient Information Section -->
+                <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="5" Padding="20" Margin="0,0,0,20" Background="#F9F9F9">
+                    <StackPanel>
+                        <TextBlock Text="Patient Information" FontSize="16" FontWeight="Bold" Foreground="#333" Margin="0,0,0,15"/>
+
+                        <!-- Patient Name -->
+                        <TextBlock Text="Full Name *" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBox Style="{StaticResource TextBoxStyle}"
+                                 Text="{Binding PatientName, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,15"
+                                 Placeholder="Enter full name"/>
+
+                        <!-- Email -->
+                        <TextBlock Text="Email Address *" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBox Style="{StaticResource TextBoxStyle}"
+                                 Text="{Binding PatientEmail, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,15"
+                                 Placeholder="example@email.com"/>
+
+                        <!-- Phone -->
+                        <TextBlock Text="Phone Number *" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBox Style="{StaticResource TextBoxStyle}"
+                                 Text="{Binding PatientPhone, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,15"
+                                 Placeholder="Enter phone number (10+ digits)"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Appointment Details Section -->
+                <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="5" Padding="20" Margin="0,0,0,20" Background="#F9F9F9">
+                    <StackPanel>
+                        <TextBlock Text="Appointment Details" FontSize="16" FontWeight="Bold" Foreground="#333" Margin="0,0,0,15"/>
+
+                        <!-- Doctor Selection -->
+                        <TextBlock Text="Select Doctor *" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <ComboBox Style="{StaticResource ComboBoxStyle}"
+                                  ItemsSource="{Binding AvailableDoctors}"
+                                  SelectedItem="{Binding SelectedDoctor, UpdateSourceTrigger=PropertyChanged}"
+                                  DisplayMemberPath="ToString"
+                                  Margin="0,0,0,15"/>
+
+                        <!-- Date Selection -->
+                        <TextBlock Text="Appointment Date *" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <DatePicker Style="{StaticResource {x:Type DatePicker}}"
+                                    SelectedDate="{Binding AppointmentDate, UpdateSourceTrigger=PropertyChanged}"
+                                    Height="32"
+                                    Margin="0,0,0,15"
+                                    Padding="8"/>
+
+                        <!-- Time Selection -->
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Text="Appointment Time" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                                <TextBlock Text="{Binding AppointmentTime, StringFormat=hh\\:mm}" 
+                                           Style="{StaticResource TextBoxStyle}"
+                                           Padding="8"
+                                           Background="#F0F0F0"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="(Default: 09:00 AM)" FontSize="11" Foreground="#666" Margin="10,0,0,0"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Description -->
+                        <TextBlock Text="Reason for Visit" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBox Style="{StaticResource TextBoxStyle}"
+                                 Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="80"
+                                 TextWrapping="Wrap"
+                                 VerticalAlignment="Top"
+                                 AcceptsReturn="True"
+                                 Padding="8"
+                                 Margin="0,0,0,15"
+                                 Placeholder="Describe the reason for your visit (optional)"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Information -->
+                <Border BorderBrush="#DCE8F1" BorderThickness="1" CornerRadius="5" Padding="15" Background="#EEF4FA">
+                    <TextBlock Foreground="#0D5A7A" FontSize="11" TextWrapping="Wrap">
+                        <Run FontWeight="Bold" Text="Note: "/>
+                        <Run Text="All fields marked with * are required. Please ensure all information is accurate before submitting."/>
+                    </TextBlock>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Status and Buttons -->
+        <StackPanel Grid.Row="2">
+            <TextBlock Text="{Binding StatusMessage}" 
+                       Foreground="#28A745" 
+                       FontSize="12"
+                       Margin="0,0,0,10"
+                       TextWrapping="Wrap"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Validation Status -->
+                <TextBlock Grid.Column="0" VerticalAlignment="Center">
+                    <Run Text="Form Status: " FontWeight="Bold"/>
+                    <Run Text="✓ Complete" Foreground="#28A745" FontWeight="Bold" 
+                         Visibility="{Binding IsFormValid, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <Run Text="✗ Incomplete" Foreground="#DC3545" FontWeight="Bold"
+                         Visibility="{Binding IsFormValid, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
+                </TextBlock>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Clear Form" 
+                            Command="{Binding ResetCommand}"
+                            Style="{StaticResource ButtonStyle}"
+                            Background="#6C757D"
+                            Margin="0,0,10,0"
+                            Padding="20,8"/>
+
+                    <Button Content="✓ Submit Appointment" 
+                            Command="{Binding SubmitCommand}"
+                            Style="{StaticResource ButtonStyle}"
+                            Background="{StaticResource SuccessBrush}"
+                            Padding="20,8"
+                            IsEnabled="{Binding IsFormValid}"/>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</UserControl>

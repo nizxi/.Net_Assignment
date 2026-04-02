@@ -1,0 +1,112 @@
+<UserControl x:Class="AppointmentSystem.Views.DoctorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="1000">
+
+    <Grid Background="White" Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <TextBlock Grid.Row="0" Text="Doctor Management" FontSize="24" FontWeight="Bold" Foreground="#333" Margin="0,0,0,20"/>
+
+        <!-- Toolbar -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,15">
+            <Button Command="{Binding RefreshCommand}"
+                    Style="{StaticResource ButtonStyle}"
+                    Padding="20,8"
+                    Content="🔄 Refresh Doctors"/>
+        </StackPanel>
+
+        <!-- Doctors DataGrid -->
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Doctors}"
+                  SelectedItem="{Binding SelectedDoctor}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  Background="White"
+                  AlternatingRowBackground="#F9F9F9"
+                  HeadersVisibility="Column"
+                  Margin="0,0,0,15">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150"/>
+                <DataGridTextColumn Header="Specialization" Binding="{Binding Specialization}" Width="180"/>
+                <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="120"/>
+                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="220"/>
+                <DataGridCheckBoxColumn Header="Available" Binding="{Binding IsAvailable}" Width="80"/>
+            </DataGrid.Columns>
+
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Height" Value="35"/>
+                </Style>
+            </DataGrid.RowStyle>
+        </DataGrid>
+
+        <!-- Doctor Details -->
+        <Border Grid.Row="3" BorderBrush="#E0E0E0" BorderThickness="1" Padding="15" CornerRadius="5" Background="#FAFAFA">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Details -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Selected Doctor Details:" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                    <Grid Visibility="{Binding SelectedDoctor, Converter={StaticResource {x:Static System:Object}}, ConverterParameter=null}">
+                        <StackPanel>
+                            <TextBlock>
+                                <Run Text="Name: " FontWeight="Bold"/>
+                                <Run Text="Dr. "/>
+                                <Run Text="{Binding SelectedDoctor.Name}"/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="Specialization: " FontWeight="Bold"/>
+                                <Run Text="{Binding SelectedDoctor.Specialization}"/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="Phone: " FontWeight="Bold"/>
+                                <Run Text="{Binding SelectedDoctor.Phone}"/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="Email: " FontWeight="Bold"/>
+                                <Run Text="{Binding SelectedDoctor.Email}"/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="Status: " FontWeight="Bold"/>
+                                <Run Text="{Binding SelectedDoctor.IsAvailable, StringFormat={}{0:Available, Unavailable}}"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock Text="No doctor selected" 
+                               Foreground="#999"
+                               Visibility="{Binding SelectedDoctor, Converter={StaticResource NullToVisibilityConverter}}"/>
+                </StackPanel>
+
+                <!-- Delete Button -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                    <Button Content="🗑️ Remove Doctor" 
+                            Command="{Binding DeleteCommand}"
+                            CommandParameter="{Binding SelectedDoctor}"
+                            Style="{StaticResource ButtonStyle}"
+                            Background="{StaticResource DangerBrush}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Status Message -->
+        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="#28A745" FontSize="11" Margin="0,5,0,0"/>
+    </Grid>
+</UserControl>
